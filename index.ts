@@ -6,24 +6,69 @@ import { recordHook, FlatfileRecord } from "@flatfile/plugin-record-hook";
 import { FlatfileEvent, Client } from "@flatfile/listener";
 import api from "@flatfile/api";
 import axios from "axios";
+import { blueprint } from "./blueprint";
 
 export default function flatfileEventListener(listener: Client) {
-  /**
-   * Part 1 example
-   */
-  listener.on("**", ({ topic }: FlatfileEvent) => {
-    console.log(`Received event: ${topic}`);
-  });
-  /**
-   * Part 2 example
-   */
+
+  // SET UP THE SPACE - This autoconfigures the Space using the template in blueprint.ts
+  listener.filter({ job: 'space:configure' }, (configure) => {
+    configure.on('job:ready', async (event) => {
+      const { spaceId, environmentId, jobId } = event.context
+      await api.jobs.ack(jobId, {
+        info: 'Creating Space',
+        progress: 10,
+      })
+
+      const timestamp = new Date();
+      // CREATE WORKBOOK FROM BLUEPRINT
+      const createWorkbook = await api.workbooks.create({
+        spaceId: spaceId,
+        environmentId: environmentId,
+        labels: ['primary'],
+        name: `${timestamp} Load Test Wide`,
+        sheets: blueprint,
+        actions: [
+          {
+            operation: 'submitAction',
+            mode: 'foreground',
+            label: 'Submit',
+            description: 'Send a webhook to the app',
+            primary: true,
+          },
+        ],
+      })
+
+      const workbookId = createWorkbook.data?.id
+
+      // ADD WORKBOOK TO SPACE
+      if (workbookId) {
+        // Need to refresh until update to Spaces to poll for changes
+        const updatedSpace = await api.spaces.update(spaceId, {
+          environmentId: environmentId,
+          primaryWorkbookId: workbookId,
+        })
+      }
+
+      await api.jobs.complete(jobId, {
+        info: 'This space is completed.',
+      })
+    })
+    // Handle the 'job:failed' event
+    configure.on('job:failed', async (event) => {
+      console.log('Space Config Failed: ' + JSON.stringify(event))
+    })
+  })
+
+  // DYNAMIC VALIDATIONS
   listener.use(
-    recordHook("contacts", (record: FlatfileRecord) => {
-      const value = record.get("firstName");
+    recordHook("orders", (record: FlatfileRecord) => {
+      // transforms all First Names to lowercase
+      const value = record.get("first_name");
       if (typeof value === "string") {
         record.set("firstName", value.toLowerCase());
       }
 
+      // validates all email addresses in the sheet and returns back an error message against them
       const email = record.get("email") as string;
       const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!validEmailAddress.test(email)) {
@@ -34,9 +79,8 @@ export default function flatfileEventListener(listener: Client) {
       return record;
     })
   );
-  /**
-   * Part 3 example
-   */
+  
+  // SUBMIT ALL DATA IN THE WORKBOOK TO A WEBHOOK
   listener.filter({ job: "workbook:submitAction" }, (configure) => {
     configure.on(
       "job:ready",
