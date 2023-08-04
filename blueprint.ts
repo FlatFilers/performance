@@ -29,12 +29,7 @@ export const blueprint = [
             {
                 "key": "nick",
                 "type": "string",
-                "label": "Nickname",
-                "constraints": [
-                    {
-                        "type": "unique"
-                    }
-                ]
+                "label": "Nickname"
             },
             {
                 "key": "email",
@@ -70,21 +65,11 @@ export const blueprint = [
                 "key": "phone3",
                 "type": "string",
                 "label": "Work Phone",
-                "constraints": [
-                    {
-                        "type": "unique"
-                    }
-                ]
             },
             {
                 "key": "phone3 ext",
                 "type": "string",
                 "label": "Work Phone Extension",
-                "constraints": [
-                    {
-                        "type": "unique"
-                    }
-                ]
             },
             {
                 "key": "dob",
@@ -193,8 +178,15 @@ export const blueprint = [
             },
             {
                 "key": "product type",
-                "type": "string",
-                "label": "Purchased Product Type"
+                "type": "enum",
+                "label": "Purchased Product Type",
+                "config": {
+                    "options": [
+                        { "value": "ind", "label": "Industrial"},
+                        { "value": "com", "label": "Commercial"},
+                        { "value": "res", "label": "Residential"}
+                    ]
+                }
             },
             {
                 "key": "product color",
@@ -295,6 +287,256 @@ export const blueprint = [
                 "key": "notes",
                 "type": "string",
                 "label": "Notes"
+            },
+            {
+                "key": "notes_1",
+                "type": "string",
+                "label": "Notes 1"
+            },
+            {
+                "key": "notes_2",
+                "type": "string",
+                "label": "Notes 2"
+            },
+            {
+                "key": "notes_3",
+                "type": "string",
+                "label": "Notes 3"
+            },
+            {
+                "key": "notes_4",
+                "type": "string",
+                "label": "Notes 4"
+            },
+            {
+                "key": "notes_5",
+                "type": "string",
+                "label": "Notes 5"
+            },
+            {
+                "key": "notes_6",
+                "type": "string",
+                "label": "Notes 6"
+            },
+            {
+                "key": "notes_7",
+                "type": "string",
+                "label": "Notes 7"
+            },
+            {
+                "key": "notes_8",
+                "type": "string",
+                "label": "Notes 8"
+            },
+            {
+                "key": "notes_9",
+                "type": "string",
+                "label": "Notes 9"
+            },
+            {
+                "key": "notes_10",
+                "type": "string",
+                "label": "Notes 10"
+            },
+            {
+                "key": "notes_11",
+                "type": "string",
+                "label": "Notes 11"
+            },
+            {
+                "key": "notes_12",
+                "type": "string",
+                "label": "Notes 12"
+            },
+            {
+                "key": "notes_13",
+                "type": "string",
+                "label": "Notes 13"
+            },
+            {
+                "key": "notes_14",
+                "type": "string",
+                "label": "Notes 14"
+            },
+            {
+                "key": "notes_15",
+                "type": "string",
+                "label": "Notes 15"
+            },
+            {
+                "key": "notes_16",
+                "type": "string",
+                "label": "Notes 16"
+            },
+            {
+                "key": "notes_17",
+                "type": "string",
+                "label": "Notes 17"
+            },
+            {
+                "key": "notes_18",
+                "type": "string",
+                "label": "Notes 18"
+            },
+            {
+                "key": "notes_19",
+                "type": "string",
+                "label": "Notes 19"
+            },
+            {
+                "key": "notes_20",
+                "type": "string",
+                "label": "Notes 20"
+            },
+            {
+                "key": "notes_21",
+                "type": "string",
+                "label": "Notes 21"
+            },
+            {
+                "key": "notes_22",
+                "type": "string",
+                "label": "Notes 22"
+            },
+            {
+                "key": "notes_23",
+                "type": "string",
+                "label": "Notes 23"
+            },
+            {
+                "key": "notes_24",
+                "type": "string",
+                "label": "Notes 24"
+            },
+            {
+                "key": "notes_25",
+                "type": "string",
+                "label": "Notes 25"
+            },
+            {
+                "key": "notes_26",
+                "type": "string",
+                "label": "Notes 26"
+            },
+            {
+                "key": "notes_27",
+                "type": "string",
+                "label": "Notes 27"
+            },
+            {
+                "key": "notes_28",
+                "type": "string",
+                "label": "Notes 28"
+            },
+            {
+                "key": "notes_29",
+                "type": "string",
+                "label": "Notes 29"
+            },
+            {
+                "key": "notes_30",
+                "type": "string",
+                "label": "Notes 30"
+            },
+            {
+                "key": "notes_31",
+                "type": "string",
+                "label": "Notes 31"
+            },
+            {
+                "key": "notes_32",
+                "type": "string",
+                "label": "Notes 32"
+            },
+            {
+                "key": "notes_33",
+                "type": "string",
+                "label": "Notes 33"
+            },
+            {
+                "key": "notes_34",
+                "type": "string",
+                "label": "Notes 34"
+            },
+            {
+                "key": "notes_35",
+                "type": "string",
+                "label": "Notes 35"
+            },
+            {
+                "key": "notes_36",
+                "type": "string",
+                "label": "Notes 36"
+            },
+            {
+                "key": "notes_37",
+                "type": "string",
+                "label": "Notes 37"
+            },
+            {
+                "key": "notes_38",
+                "type": "string",
+                "label": "Notes 38"
+            },
+            {
+                "key": "notes_39",
+                "type": "string",
+                "label": "Notes 39"
+            },
+            {
+                "key": "notes_40",
+                "type": "string",
+                "label": "Notes 40"
+            },
+            {
+                "key": "notes_41",
+                "type": "string",
+                "label": "Notes 41"
+            },
+            {
+                "key": "notes_42",
+                "type": "string",
+                "label": "Notes 42"
+            },
+            {
+                "key": "notes_43",
+                "type": "string",
+                "label": "Notes 43"
+            },
+            {
+                "key": "notes_44",
+                "type": "string",
+                "label": "Notes 44"
+            },
+            {
+                "key": "notes_45",
+                "type": "string",
+                "label": "Notes 45"
+            },
+            {
+                "key": "notes_46",
+                "type": "string",
+                "label": "Notes 46"
+            },
+            {
+                "key": "notes_47",
+                "type": "string",
+                "label": "Notes 47"
+            },
+            {
+                "key": "notes_48",
+                "type": "string",
+                "label": "Notes 48"
+            },
+            {
+                "key": "notes_49",
+                "type": "string",
+                "label": "Notes 49"
+            },
+            {
+                "key": "notes_50",
+                "type": "string",
+                "label": "Notes 50"
             }
         ]
     } as SheetConfig

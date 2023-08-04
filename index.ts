@@ -7,6 +7,8 @@ import { FlatfileEvent, Client } from "@flatfile/listener";
 import api from "@flatfile/api";
 import axios from "axios";
 import { blueprint } from "./blueprint";
+import { formatRecordDates } from "./dateFormatting";
+import { RecordsResponse } from "@flatfile/api/api";
 
 export default function flatfileEventListener(listener: Client) {
 
@@ -59,7 +61,7 @@ export default function flatfileEventListener(listener: Client) {
     })
   })
 
-  // DYNAMIC VALIDATIONS
+  // DYNAMIC VALIDATIONS WITH THE RECORD HOOK PLUGIN
   listener.use(
     recordHook("orders", (record: FlatfileRecord) => {
       // transforms all First Names to lowercase
@@ -76,20 +78,38 @@ export default function flatfileEventListener(listener: Client) {
         record.addError("email", "Invalid email address");
       }
 
+      // formats all dates to a standard structure
+      try {
+        formatRecordDates(record, "orders")
+      } catch (error) {
+        console.log('Error occurred during date formatting:', error)
+      }
+
       return record;
     })
   );
   
-  // SUBMIT ALL DATA IN THE WORKBOOK TO A WEBHOOK
+  // SUBMIT ALL DATA IN THE WORKBOOK TO A WEBHOOK; THIS PAGES THROUGH ALL RECORDS AND BUILDS A RESPONSE CONTAINING ALL DATA
   listener.filter({ job: "workbook:submitAction" }, (configure) => {
     configure.on(
       "job:ready",
       async ({ context: { jobId, workbookId }, payload }: FlatfileEvent) => {
-        const { data: sheets } = await api.sheets.list({ workbookId });
-
-        const records: { [name: string]: any } = {};
-        for (const [index, element] of sheets.entries()) {
-          records[`Sheet[${index}]`] = await api.records.get(element.id);
+        const sheets = await api.sheets.list({ workbookId });
+        let records: RecordsResponse;
+        let recordsSubmit: any[] = [];
+        for (const [index, element] of sheets.data.entries()) {
+          const recordCount = await api.sheets.getRecordCounts(element.id);
+          console.log(JSON.stringify(recordCount,null,2))
+          const pages = Math.ceil(recordCount.data.counts.total / 1000);
+          console.log(JSON.stringify(pages))
+          for (let i = 1; i <= pages; i++) {
+            records = await api.records.get(element.id, { pageNumber: i });
+            console.log(JSON.stringify(records,null,2));
+            if (records.data.records.some((record) => !(record.metadata.processed == true))) {
+              return
+            };
+            recordsSubmit = [...recordsSubmit, records.data.records]
+          }
         }
 
         try {
@@ -98,11 +118,9 @@ export default function flatfileEventListener(listener: Client) {
             progress: 10,
           });
 
-          console.log(JSON.stringify(records, null, 2));
-
           const webhookReceiver =
             process.env.WEBHOOK_SITE_URL ||
-            "https://webhook.site/c83648d4-bf0c-4bb1-acb7-9c170dad4388"; //update this
+            "https://webhook.site/57b05d59-0b25-4c1d-937e-f892b83f2771"; //update this
 
           const response = await axios.post(
             webhookReceiver,
@@ -110,7 +128,7 @@ export default function flatfileEventListener(listener: Client) {
               ...payload,
               method: "axios",
               sheets,
-              records,
+              recordsSubmit,
             },
             {
               headers: {

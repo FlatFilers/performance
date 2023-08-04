@@ -13,6 +13,8 @@ Rename `.env.example` to `.env` and update to your creds. This file should look 
 You can find the FLATFILE_ENVIRONMENT_ID and the FLATFILE_API_KEY in the Developer Settings section of the Flatfile Dashboard.
 webhook.site is a convenient and easy way to test the content of webhooks. When you go to the site it will automatically create a webhook endpoint for you to use.
 
+Finally, you'll want to update the node package dependencies by running `npm i` from the root directory.
+
 ## Developing
 
 Run `npm run dev` to run local development, if you're interested in seeing a real-time stream of events. This is how we recorded timestamps for each event processing in Flatfile to set our performance benchmarks.
