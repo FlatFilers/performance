@@ -25,7 +25,7 @@ Alternatively, you can deploy this build to Flatfile using `npm run deploy`, in 
 
 ## Testing
 
-Use the files in ./data_examples to try out different sized data payloads in a Flatfile configuration. Whether developing or deploying, once you've run your command, log into the Flatfile dashboard (platform.flatfile.com), click "Create Space" from the environement to which you are pointing this configuration, and then drag any one of the examples to test the flow.
+Use the [example files in this Google Drive](https://drive.google.com/drive/folders/1e0gDKrVuX9IlBp-dzESemgwDwlx1QsJp?usp=sharing) to try out different sized data payloads in a Flatfile configuration. Whether developing or deploying, once you've run your command, log into the Flatfile dashboard (platform.flatfile.com), click "Create Space" from the environement to which you are pointing this configuration, and then drag any one of the examples to test the flow.
 
 ## See all code examples
 
