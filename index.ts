@@ -9,6 +9,7 @@ import axios from "axios";
 import { blueprint } from "./blueprint";
 import { formatRecordDates } from "./dateFormatting";
 import { RecordsResponse } from "@flatfile/api/api";
+import { ZipExtractor } from "@flatfile/plugin-zip-extractor";
 
 export default function flatfileEventListener(listener: Client) {
 
@@ -60,6 +61,9 @@ export default function flatfileEventListener(listener: Client) {
       console.log('Space Config Failed: ' + JSON.stringify(event))
     })
   })
+
+  // ZIP FILE SUPPORT
+  listener.use(ZipExtractor());
 
   // DYNAMIC VALIDATIONS WITH THE RECORD HOOK PLUGIN
   listener.use(
