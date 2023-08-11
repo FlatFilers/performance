@@ -22,6 +22,18 @@ function formatDate(dateString) {
     return moment(dateString, 'MMDDYYYY').format('YYYY-MM-DD');
   }
 
+  // Check if the date string is in 'Thu Jul 06 2023 00:28:19 GMT-0400 (Eastern Daylight Time)' format
+  if (
+    dateString.includes(' GMT-')
+  ) {
+    // Split out the long form timezone
+    dateString = dateString.split(' GMT-')[0];
+    if (moment(dateString,'ddd MMM DD YYYY HH:mm:ss',true).isValid()) {
+      // Format the date string as 'yyyy-MM-dd'
+      return moment(dateString, 'ddd MMM DD YYYY HH:mm:ss').format('YYYY-MM-DD');
+    }
+  }
+
   // Iterate through all possible date formats and try to parse the date string
   for (const format of momentFormats) {
     const momentDate = moment(dateString, format, true);
@@ -64,7 +76,6 @@ function formatRecordDates(record, sheetSlug) {
       }
       // If the formatted date is different from the original value, update the record
       else if (formattedDate !== inputDate.trim()) {
-        console.log(formattedDate);
         record.set(dateField, formattedDate);
         record.addComment(dateField, 'Date has been formatted as yyyy-MM-dd');
       }
