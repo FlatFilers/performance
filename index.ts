@@ -10,10 +10,16 @@ import { blueprint } from "./blueprint";
 import { formatRecordDates } from "./dateFormatting";
 import { RecordsResponse } from "@flatfile/api/api";
 import { ZipExtractor } from "@flatfile/plugin-zip-extractor";
+import { ExcelExtractor } from "@flatfile/plugin-xlsx-extractor";
 
 export default function flatfileEventListener(listener: Client) {
 
   // SET UP THE SPACE - This autoconfigures the Space using the template in blueprint.ts
+  listener.on('**', async(event) => {
+    const timestamp = new Date();
+    console.log(`Event topic: ${JSON.stringify(event.topic)} | Timestamp: ${timestamp}`)
+  })
+
   listener.filter({ job: 'space:configure' }, (configure) => {
     configure.on('job:ready', async (event) => {
       const { spaceId, environmentId, jobId } = event.context
@@ -64,6 +70,9 @@ export default function flatfileEventListener(listener: Client) {
 
   // ZIP FILE SUPPORT
   listener.use(ZipExtractor());
+
+  // EXCEL FILE SUPPORT
+  listener.use(ExcelExtractor());
 
   // DYNAMIC VALIDATIONS WITH THE RECORD HOOK PLUGIN
   listener.use(
