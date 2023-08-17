@@ -17,7 +17,7 @@ export default function flatfileEventListener(listener: Client) {
   // SET UP THE SPACE - This autoconfigures the Space using the template in blueprint.ts
   listener.on('**', async(event) => {
     const timestamp = new Date();
-    console.log(`Event topic: ${JSON.stringify(event.topic)} | Timestamp: ${timestamp}`)
+    console.log(`Event topic: ${JSON.stringify(event.topic)} | Timestamp: ${timestamp} | Context: ${JSON.stringify(event.context,null,2)}`)
   })
 
   listener.filter({ job: 'space:configure' }, (configure) => {
