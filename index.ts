@@ -1,10 +1,11 @@
 /**
  * See all code examples: https://github.com/FlatFilers/flatfile-docs-kitchen-sink
  */
-
-import { recordHook, FlatfileRecord } from "@flatfile/plugin-record-hook";
+import { FlatfileRecord } from "@flatfile/hooks";
+import { recordHook } from "@flatfile/plugin-record-hook";
 import { FlatfileEvent, Client } from "@flatfile/listener";
 import api from "@flatfile/api";
+import { JobResponse } from "@flatfile/api/api";
 import axios from "axios";
 import { blueprint } from "./blueprint";
 import { formatRecordDates } from "./dateFormatting";
@@ -15,9 +16,15 @@ import { ExcelExtractor } from "@flatfile/plugin-xlsx-extractor";
 export default function flatfileEventListener(listener: Client) {
 
   // SET UP THE SPACE - This autoconfigures the Space using the template in blueprint.ts
-  listener.on('**', async(event) => {
+  listener.on('**', async (event) => {
     const timestamp = new Date();
-    console.log(`Event topic: ${JSON.stringify(event.topic)} | Timestamp: ${timestamp} | Context: ${JSON.stringify(event.context,null,2)}`)
+    console.log(`Event topic: ${JSON.stringify(event.topic)} | Timestamp: ${timestamp} `)
+    const { jobId } = event.context
+    let job: JobResponse
+    if (jobId) {
+      job = await api.jobs.get(jobId)
+      console.log(`Job type: ${JSON.stringify(job.data.type, null, 2)} | Job operation: ${JSON.stringify(job.data.operation, null, 2)} | Job status: ${JSON.stringify(job.data.status, null, 2)}`)
+    }
   })
 
   listener.filter({ job: 'space:configure' }, (configure) => {
@@ -76,31 +83,38 @@ export default function flatfileEventListener(listener: Client) {
 
   // DYNAMIC VALIDATIONS WITH THE RECORD HOOK PLUGIN
   listener.use(
-    recordHook("orders", (record: FlatfileRecord) => {
-      // transforms all First Names to lowercase
-      const value = record.get("first_name");
-      if (typeof value === "string") {
-        record.set("first_name", value.toLowerCase());
-      }
+    // bulkRecordHook(
+    recordHook(
+      "orders",
+      (record: FlatfileRecord) => {
+        // return records.map((record) => {
+          // transforms all First Names to lowercase
+          const value = record.get("first_name");
+          if (typeof value === "string") {
+            record.set("first_name", value.toLowerCase());
+          }
 
-      // validates all email addresses in the sheet and returns back an error message against them
-      const email = record.get("email") as string;
-      const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!validEmailAddress.test(email)) {
-        console.log("Invalid email address");
-        record.addError("email", "Invalid email address");
-      }
+          // // validates all email addresses in the sheet and returns back an error message against them
+          // const email = record.get("email") as string;
+          // const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          // if (!validEmailAddress.test(email)) {
+          //   console.log("Invalid email address");
+          //   record.addError("email", "Invalid email address");
+          // }
 
-      // formats all dates to a standard structure
-      try {
-        formatRecordDates(record, "orders")
-      } catch (error) {
-        console.log('Error occurred during date formatting:', error)
-      }
+          // // formats all dates to a standard structure
+          // try {
+          //   formatRecordDates(record, "orders")
+          // } catch (error) {
+          //   console.log('Error occurred during date formatting:', error)
+          // }
 
-      return record;
-    })
-  );
+          return record;
+        // });
+      }
+      ),
+      // { chunkSize: 10000, parallel: 10 }
+    ),
 
   // SUBMIT ALL DATA IN THE WORKBOOK TO A WEBHOOK; THIS PAGES THROUGH ALL RECORDS AND BUILDS A RESPONSE CONTAINING ALL DATA
   listener.filter({ job: "workbook:submitAction" }, (configure) => {
@@ -111,7 +125,7 @@ export default function flatfileEventListener(listener: Client) {
         let records: RecordsResponse;
         const webhookReceiver =
           process.env.WEBHOOK_SITE_URL ||
-          "https://webhook.site/57b05d59-0b25-4c1d-937e-f892b83f2771"; //update this if you would like to test yourself
+          "https://webhook.site/64ea7916-da2e-4f64-becb-2b76ab472191"; //update this if you would like to test yourself
 
         try {
           await api.jobs.ack(jobId, {
