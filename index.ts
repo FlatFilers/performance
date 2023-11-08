@@ -106,7 +106,7 @@ export default function flatfileEventListener(listener: Client) {
           // try {
           //   formatRecordDates(record, "orders")
           // } catch (error) {
-          //   console.log('Error occurred during date formatting:', error)
+          //   // console.log('Error occurred during date formatting:', error)
           // }
 
           return record;
@@ -125,7 +125,7 @@ export default function flatfileEventListener(listener: Client) {
         let records: RecordsResponse;
         const webhookReceiver =
           process.env.WEBHOOK_SITE_URL ||
-          "https://webhook.site/64ea7916-da2e-4f64-becb-2b76ab472191"; //update this if you would like to test yourself
+          "https://webhook.site/0aff6339-9c0b-4d6c-96ba-16ccf7b3089b"; //update this if you would like to test yourself
 
         try {
           await api.jobs.ack(jobId, {
