@@ -12,6 +12,8 @@ import { formatRecordDates } from "./dateFormatting";
 import { RecordsResponse } from "@flatfile/api/api";
 import { ZipExtractor } from "@flatfile/plugin-zip-extractor";
 import { ExcelExtractor } from "@flatfile/plugin-xlsx-extractor";
+import { JSONExtractor } from "@flatfile/plugin-json-extractor";
+
 
 export default function flatfileEventListener(listener: Client) {
 
@@ -80,6 +82,13 @@ export default function flatfileEventListener(listener: Client) {
 
   // EXCEL FILE SUPPORT
   listener.use(ExcelExtractor());
+
+  // JSON FILE SUPPORT
+  // Initialize the JSON extractor
+  const jsonExtractor = JSONExtractor();
+
+  // Register the extractor as a middleware for the Flatfile listener
+  listener.use(jsonExtractor);
 
   // DYNAMIC VALIDATIONS WITH THE RECORD HOOK PLUGIN
   listener.use(
