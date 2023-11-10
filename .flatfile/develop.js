@@ -84207,6 +84207,30 @@ function flatfileEventListener(listener) {
             console.log('Space Config Failed: ' + JSON.stringify(event));
         });
     });
+    // TRIGGER SHEET CSV DOWNLOAD ON EXTRACTION COMPLETION
+    listener.on('job:completed', { operation: 'extract*' }, async (event) => {
+        const { fileId, jobId } = event.context;
+        const { data: file } = await _flatfile_api__WEBPACK_IMPORTED_MODULE_0___default().files.get(fileId);
+        const { data: job } = await _flatfile_api__WEBPACK_IMPORTED_MODULE_0___default().jobs.get(jobId);
+        const { data: workbook } = await _flatfile_api__WEBPACK_IMPORTED_MODULE_0___default().workbooks.get(file.workbookId);
+        const sheetId = workbook.sheets[0].id;
+        try {
+            await _flatfile_api__WEBPACK_IMPORTED_MODULE_0___default().jobs.create({
+                type: 'sheet',
+                operation: 'export',
+                trigger: 'immediate',
+                source: sheetId,
+                config: {
+                    options: {
+                        filter: 'all',
+                    },
+                },
+            });
+        }
+        catch (error) {
+            console.error(error);
+        }
+    });
     // ZIP FILE SUPPORT
     listener.use((0,_flatfile_plugin_zip_extractor__WEBPACK_IMPORTED_MODULE_1__.ZipExtractor)());
     // EXCEL FILE SUPPORT

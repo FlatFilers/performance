@@ -13,7 +13,7 @@
   "dependencies": {
     "@flatfile/api": "*",
     "@flatfile/listener": "*",
-    "@flatfile/plugin-json-extractor": "^0.6.7",
+    "@flatfile/plugin-json-extractor": "^0.6.9",
     "@flatfile/plugin-record-hook": "*",
     "@flatfile/plugin-xlsx-extractor": "*",
     "@flatfile/plugin-zip-extractor": "*",

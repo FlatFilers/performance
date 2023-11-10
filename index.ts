@@ -1,7 +1,7 @@
 /**
  * See all code examples: https://github.com/FlatFilers/flatfile-docs-kitchen-sink
  */
-import { Client } from "@flatfile/listener";
+import { FlatfileEvent, Client } from "@flatfile/listener";
 import api from "@flatfile/api";
 import { JobResponse } from "@flatfile/api/api";
 import { ZipExtractor } from "@flatfile/plugin-zip-extractor";
@@ -75,11 +75,12 @@ export default function flatfileEventListener(listener: Client) {
 
   // TRIGGER SHEET CSV DOWNLOAD ON EXTRACTION COMPLETION
   listener.on(
-    'job:ready',
+    'job:completed',
     { operation: 'extract*' },
     async (event: FlatfileEvent) => {
-      const { fileId } = event.context
+      const { fileId, jobId } = event.context
       const { data: file } = await api.files.get(fileId)
+      const { data: job } = await api.jobs.get(jobId)
       const { data: workbook } = await api.workbooks.get(file.workbookId)
       const sheetId = workbook.sheets[0].id
 
