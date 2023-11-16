@@ -103,20 +103,20 @@ export default function flatfileEventListener(listener: Client) {
             record.set("first_name", value.toLowerCase());
           }
 
-          // // validates all email addresses in the sheet and returns back an error message against them
-          // const email = record.get("email") as string;
-          // const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          // if (!validEmailAddress.test(email)) {
-          //   console.log("Invalid email address");
-          //   record.addError("email", "Invalid email address");
-          // }
+          // validates all email addresses in the sheet and returns back an error message against them
+          const email = record.get("email") as string;
+          const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!validEmailAddress.test(email)) {
+            console.log("Invalid email address");
+            record.addError("email", "Invalid email address");
+          }
 
-          // // formats all dates to a standard structure
-          // try {
-          //   formatRecordDates(record, "orders")
-          // } catch (error) {
-          //   // console.log('Error occurred during date formatting:', error)
-          // }
+          // formats all dates to a standard structure
+          try {
+            formatRecordDates(record, "orders")
+          } catch (error) {
+            console.log('Error occurred during date formatting:', error)
+          }
 
           return record;
         // });
